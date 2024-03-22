@@ -1,24 +1,15 @@
 import { Avatar, Flex } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import rehypeHighlight from "rehype-highlight";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import { motion } from "framer-motion";
 
 const Chat = ({ message, user }: { message: string; user: "me" | "gpt" }) => {
-  const chatStringIndex = useRef(0);
   const [gptMessage, setGptMessage] = useState("");
 
-  function appendChar() {
-    setGptMessage((prev) => prev + message[chatStringIndex.current]);
-    chatStringIndex.current++;
-  }
-
   useEffect(() => {
-    if (chatStringIndex.current < message.length - 1) {
-      const appendCharInterval = setInterval(appendChar, 50);
-      return () => clearInterval(appendCharInterval);
-    }
-  }, [gptMessage, chatStringIndex.current]);
+    setGptMessage(message);
+  }, [message]);
 
   return (
     <motion.div
@@ -76,7 +67,7 @@ const Chat = ({ message, user }: { message: string; user: "me" | "gpt" }) => {
             </Flex>
           )}
           <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
-            {user === "gpt" ? gptMessage || "" : message || ""}
+            {gptMessage}
           </ReactMarkdown>
         </Flex>
       </Flex>

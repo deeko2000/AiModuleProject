@@ -23,13 +23,19 @@ export default async function handler(
   const message = req.body.message;
 
   try {
-    const completion = await openai.createCompletion({
-      model: "text-davinci-003",
-      prompt: message,
-      temperature: 0.6,
-      max_tokens: 3500,
+    // Construct the conversation in the format expected by createChatCompletion
+    const conversation = [
+      { role: "user", content: message },
+    ];
+
+    // Send the conversation to OpenAI for completion
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo-1106",
+      messages: conversation,
     });
-    res.status(200).json({ result: completion.data.choices[0].text });
+
+    // Extract and send the response back to the client
+    res.status(200).json({ result: completion.data.choices[0].message.content });
   } catch (error: any) {
     // Consider adjusting the error handling logic for your use case
     if (error.response) {
